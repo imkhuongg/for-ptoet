@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>From DK to Ptoet</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Work+Sans:400,500,600,700,900">
+  <style>
+    :root {
+      --accent: #E34D67;
+      --text: #666;
+      --muted: #A1A5B8;
+      --shadow: #DDE5EE;
+      color-scheme: light;
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html {
+      scroll-padding-top: env(safe-area-inset-top, 0px)
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0;
+      padding: 12px;
+      background: #fff;
+      font-family: 'Work Sans', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    .slider-wrapper {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 0 35px 20px var(--shadow)
+    }
+
+    .slider {
+      display: flex;
+      flex-direction: column;
+      height: calc(100svh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+      min-height: 540px;
+      max-height: 780px
+    }
+
+    /* Nav (mobile: horizontal on top) */
+    .nav {
+      order: 1;
+      padding: 16px 16px 6px
+    }
+
+    .nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 22px
+    }
+
+    .nav li span {
+      display: block;
+      cursor: pointer;
+      padding: 8px 2px;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      transition: all .5s ease
+    }
+
+    .nav li span.active {
+      color: var(--accent);
+      transform: scale(1.1)
+    }
+
+    /* Slides */
+    .slides {
+      order: 2;
+      position: relative;
+      flex: 1;
+      min-height: 0;
+      margin: 0 16px;
+      container-type: inline-size;
+      touch-action: pan-y
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      overflow: hidden;
+      z-index: 1
+    }
+
+    .bg {
+      position: absolute;
+      inset: 0;
+      background-repeat: no-repeat
+    }
+
+    .bg1 {
+      background-image: radial-gradient(ellipse 48% 16% at 22% 100%, #fff 0, rgba(255, 255, 255, 0) 100%), radial-gradient(ellipse 52% 18% at 78% 100%, #fff 0, rgba(255, 255, 255, 0) 100%), radial-gradient(ellipse 30% 8% at 50% 84%, rgba(255, 255, 255, .7) 0, rgba(255, 255, 255, 0) 100%), linear-gradient(180deg, #9bbdd0 0, #d6e5ee 42%, #f4e7dc 66%, #cfd8dc 100%)
+    }
+
+    .bg2 {
+      background-image: radial-gradient(ellipse 48% 16% at 22% 100%, #fff 0, rgba(255, 255, 255, 0) 100%), radial-gradient(ellipse 52% 18% at 78% 100%, #fff 0, rgba(255, 255, 255, 0) 100%), radial-gradient(ellipse 30% 8% at 50% 84%, rgba(255, 255, 255, .7) 0, rgba(255, 255, 255, 0) 100%), linear-gradient(180deg, #a9c9b8 0, #dcebe0 42%, #f1efe0 66%, #cdd9d2 100%)
+    }
+
+    .bg3 {
+      background-image: radial-gradient(ellipse 48% 16% at 22% 100%, #fff 0, rgba(255, 255, 255, 0) 100%), radial-gradient(ellipse 52% 18% at 78% 100%, #fff 0, rgba(255, 255, 255, 0) 100%), radial-gradient(ellipse 30% 8% at 50% 84%, rgba(255, 255, 255, .7) 0, rgba(255, 255, 255, 0) 100%), linear-gradient(180deg, #c3b5d6 0, #eadff0 42%, #f8e6e0 66%, #d9d2d8 100%)
+    }
+
+    .content {
+      position: absolute;
+      inset: 0;
+      padding: 8cqw 8cqw 16cqw;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly
+    }
+
+    .content h1 {
+      margin: 0;
+      text-transform: uppercase;
+      color: #fff;
+      font-weight: 900;
+      font-size: 12vw;
+      font-size: 14cqw;
+      line-height: 1;
+      text-align: center;
+      opacity: .6;
+      position: relative
+    }
+
+    .content h2 {
+      margin: 0;
+      color: var(--accent);
+      font-weight: 900;
+      font-size: 8.6cqw;
+      line-height: 1.02;
+      max-width: 88%;
+      position: relative
+    }
+
+    .txt {
+      margin-top: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px
+    }
+
+    .txt p {
+      margin: 0;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+      font-weight: 500
+    }
+
+    .txt button {
+      width: 100%;
+      min-height: 52px;
+      border-radius: 6px;
+      background: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      text-transform: uppercase;
+      font: 600 12px 'Work Sans', sans-serif;
+      letter-spacing: .2em;
+      padding: 10px;
+      cursor: pointer;
+      outline: none
+    }
+
+    /* Yes / No question (slide 2) */
+    .yn {
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      flex-wrap: nowrap;
+      width: 100%;
+      min-height: 60px
+    }
+
+    .yn button {
+      font-family: 'Work Sans', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1.1;
+      padding: .8em 1.8em;
+      border-radius: 6px;
+      cursor: pointer;
+      outline: none;
+      border: 2px solid var(--accent);
+      transition: font-size .35s ease, opacity .3s
+    }
+
+    .yn .yes {
+      background: var(--accent);
+      color: #fff
+    }
+
+    .yn .no {
+      background: transparent;
+      color: var(--accent)
+    }
+
+    .yn .no.gone {
+      display: none
+    }
+
+    /* Popup */
+    .popup {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(20, 20, 30, .4);
+      z-index: 50;
+      padding: 24px
+    }
+
+    .popup.open {
+      display: flex
+    }
+
+    .pop-card {
+      background: #fff;
+      padding: 34px 40px 28px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, .25);
+      animation: pop .4s cubic-bezier(.2, 1.4, .4, 1)
+    }
+
+    .pop-emoji {
+      font-size: 48px;
+      line-height: 1
+    }
+
+    .pop-card h3 {
+      margin: 12px 0 20px;
+      color: var(--accent);
+      font-weight: 900;
+      font-size: 30px
+    }
+
+    .pop-close {
+      background: transparent;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      font: 600 13px 'Work Sans', sans-serif;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      padding: 12px 30px;
+      border-radius: 6px;
+      cursor: pointer;
+      outline: none
+    }
+
+    @keyframes pop {
+      from {
+        transform: scale(.6);
+        opacity: 0
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1
+      }
+    }
+
+    /* Squares (mobile: bottom, horizontal) */
+    .dots {
+      order: 3;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      padding: 16px 0 18px
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--muted);
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      opacity: .7;
+      transition: background .4s
+    }
+
+    .dot.red {
+      background: var(--accent);
+      opacity: 1
+    }
+
+    /* Tablet / desktop: vertical nav on the right, squares bottom-left */
+    @media (min-width:700px) {
+      body {
+        padding: 30px 40px
+      }
+
+      .slider {
+        flex-direction: row;
+        height: 560px;
+        max-height: none;
+        min-height: 0;
+        padding: 40px 0
+      }
+
+      .nav {
+        order: 3;
+        width: 10%;
+        padding: 8px 0 0;
+        display: flex;
+        justify-content: center
+      }
+
+      .nav ul {
+        gap: 22px;
+        writing-mode: vertical-rl
+      }
+
+      .nav li span {
+        padding: 0 4px;
+        font-size: 10px
+      }
+
+      .slides {
+        order: 2;
+        width: 80%;
+        flex: none;
+        margin: 0
+      }
+
+      .dots {
+        order: 1;
+        width: 10%;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 13px;
+        padding: 0
+      }
+
+      .content {
+        padding: 6cqw 8cqw 12cqw
+      }
+
+      .content h2 {
+        font-size: 7.4cqw;
+        max-width: 80%
+      }
+
+      .txt {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px
+      }
+
+      .txt p {
+        max-width: 55%;
+        font-size: 12px;
+        line-height: 1.5
+      }
+
+      .txt button {
+        width: 25cqw;
+        min-width: 150px;
+        flex: none;
+        min-height: 0;
+        padding: 9px;
+        font-size: 12px
+      }
+    }
+
+    /* Landscape phone (e.g. iPhone 15 Pro Max rotated: 932x430) */
+    @media (max-height:520px) and (orientation:landscape) {
+      body {
+        padding: 8px max(12px, env(safe-area-inset-right)) 8px max(12px, env(safe-area-inset-left))
+      }
+
+      .slider {
+        height: calc(100svh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+        min-height: 0;
+        max-height: none;
+        padding: 14px 0
+      }
+
+      .content {
+        padding: 4vh 6cqw 8vh
+      }
+
+      .content h1 {
+        font-size: 12vh
+      }
+
+      .content h2 {
+        font-size: 6.6vh;
+        max-width: 85%
+      }
+
+      .txt p {
+        font-size: 11px;
+        line-height: 1.4;
+        max-width: 60%
+      }
+
+      .txt button {
+        width: 150px;
+        min-width: 0;
+        font-size: 10px;
+        padding: 5px
+      }
+
+      .nav li span {
+        font-size: 9px
+      }
+    }
+
+    /* Slide 1: long greeting, smaller type so everything fits */
+    .slide[data-order="1"] h1 {
+      font-size: 7cqw
+    }
+
+    .slide[data-order="1"] h2 {
+      font-size: 6cqw;
+      max-width: 100%
+    }
+
+    .slide[data-order="1"] .txt p {
+      max-width: 100%
+    }
+
+    @media (min-width:700px) {
+      .slide[data-order="1"] h2 {
+        font-size: 4.8cqw
+      }
+
+      .slide[data-order="1"] .txt p {
+        font-size: 13px
+      }
+    }
+
+    @media (max-height:520px) and (orientation:landscape) {
+      .slide[data-order="1"] h1 {
+        font-size: 9vh
+      }
+
+      .slide[data-order="1"] h2 {
+        font-size: 5.5vh
+      }
+
+      .slide[data-order="1"] .txt p {
+        font-size: 11px
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slider-wrapper">
+    <div class="slider">
+      <div class="nav">
+        <ul>
+          <li><span data-order="1">FROM DK</span></li>
+          <li><span data-order="2">TO</span></li>
+          <li><span data-order="3">PTOET</span></li>
+        </ul>
+      </div>
+
+      <div class="slides" id="slides">
+        <div class="slide" data-order="1">
+          <div class="bg bg1"></div>
+          <div class="content">
+            <h1>HẾ LÔOOOOO PTOET</h1>
+            <h2>TRẦM TRỌNG THÔNG BÁO NAY LÀ NGÀY 20/100</h2>
+            <div class="txt">
+              <p>Chúc ptoet của toii 20/10 thật vui vẻ và hạnh phúc nhé. Chúc ptoet lúc nào cũng xinh đẹp, vui vẻ, bình
+                an, làm gì cũng thuận lợi và luôn gặp được thật nhiều điều tốt đẹp. Mong ptoet mỗi ngày đều có thật
+                nhiều niềm vui, luôn được yêu thương và không phải buồn phiền quá nhiều nha. Toii cũng mong mình sẽ luôn
+                có thể ở bên cạnh, quan tâm, chăm sóc và cùng ptoet tạo nên thật nhiều kỷ niệm đẹp. Chúc ptoet có một
+                ngày 20/10 thật đặc biệt nhé. Thương ptoet nhiều.</p>
+            </div>
+          </div>
+        </div>
+        <div class="slide" data-order="2">
+          <div class="bg bg2"></div>
+          <div class="content">
+            <h1>Ptoet ơiiii</h1>
+            <h2>Ptoet có iuu DK khonggg</h2>
+            <div class="yn">
+              <button class="yes" id="yes">Toi dong tinh</button>
+              <button class="no" id="no">Khonggg</button>
+            </div>
+          </div>
+        </div>
+        <div class="slide" data-order="3">
+          <div class="bg bg3"></div>
+          <div class="content">
+            <h1>Hoiiii</h1>
+            <h2>Tóm cái váy lại là</h2>
+            <div class="txt">
+              <p>Hiện tại toi yêu ptoet, tuy là ptoet có thể lúc iuu toi lúc khong nhưng mà ít nhất là hiện tại ptoet đang ở bên toii, và toii hạnh phúc với điều đó, cùng cố gắng nheeeee</p>
+              <button onclick="window.location.href='https://imkhuongg.github.io/FLower/'" >Bấm để hiểu nhau hơn</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dots">
+        <button class="dot" data-order="1" aria-label="Slide 1"></button>
+        <button class="dot" data-order="2" aria-label="Slide 2"></button>
+        <button class="dot" data-order="3" aria-label="Slide 3"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="popup" id="popup">
+    <div class="pop-card">
+      <div class="pop-emoji">💕</div>
+      <h3>Ogeeeee toi biec ma, toi cung iuu ptoettt lammm!</h3>
+      <button class="pop-close"> :))) </button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.4/TweenMax.min.js"></script>
+  <script>
+    $(function () {
+      var total = 3, current = 1, busy = false;
+
+      function parts(s) {
+        return { h1: s.find('h1'), h2: s.find('h2'), p: s.find('p'), btn: s.find('button'), bg: s.find('.bg') };
+      }
+
+      function show(order) {
+        if (order === current || busy || order < 1 || order > total) return;
+        busy = true;
+        var out = $('.slide[data-order="' + current + '"]');
+        var inn = $('.slide[data-order="' + order + '"]');
+        var o = parts(out), i = parts(inn);
+
+        out.css('z-index', 2);
+        TweenMax.to(out, 0.8, { autoAlpha: 0, onComplete: function () { out.css('z-index', 1); busy = false; } });
+        TweenMax.to(o.bg, 0.8, { scale: 1.1 });
+
+        TweenMax.to(inn, 0.8, { autoAlpha: 1 });
+        TweenMax.set(i.bg, { scale: 1 });
+        TweenMax.fromTo(i.h1, 0.6, { autoAlpha: 0, x: 60 }, { autoAlpha: 0.6, x: 0, ease: Power2.easeOut });
+        TweenMax.fromTo(i.h2, 0.5, { autoAlpha: 0, x: -80 }, { autoAlpha: 1, x: 0, ease: Power2.easeOut });
+        TweenMax.fromTo(i.p, 0.8, { autoAlpha: 0, x: 30 }, { autoAlpha: 1, x: 0, ease: Power2.easeOut });
+        TweenMax.fromTo(i.btn, 0.5, { autoAlpha: 0 }, { autoAlpha: 1, delay: 0.2 });
+
+        current = order;
+        $('.nav span').removeClass('active').filter('[data-order="' + order + '"]').addClass('active');
+        $('.dot').removeClass('red').filter('[data-order="' + order + '"]').addClass('red');
+      }
+
+      $('.nav span, .dot').on('click', function () { show(+$(this).data('order')); });
+
+      var sx = 0, sy = 0, el = document.getElementById('slides');
+      el.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+      el.addEventListener('touchend', function (e) {
+        var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+        if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) show(current + (dx < 0 ? 1 : -1));
+      }, { passive: true });
+
+      var noCount = 0, MAXFS = 56;
+      var $yes = $('#yes'), $no = $('#no');
+      $no.on('click', function () {
+        noCount++;
+        $yes.css('font-size', Math.min(MAXFS, 18 + noCount * 6) + 'px');
+        var nfs = 18 - noCount * 2;
+        if (nfs <= 3) { $no.addClass('gone'); } else { $no.css('font-size', nfs + 'px'); }
+      });
+      $yes.on('click', function () { $('#popup').addClass('open'); });
+      $('#popup').on('click', function (e) {
+        if (e.target === this || $(e.target).is('.pop-close')) $(this).removeClass('open');
+      });
+
+      var first = $('.slide[data-order="1"]');
+      TweenMax.to(first, 0.5, { autoAlpha: 1 });
+      $('.nav span[data-order="1"]').addClass('active');
+      $('.dot[data-order="1"]').addClass('red');
+    });
+  </script>
+</body>
+
+</html>
